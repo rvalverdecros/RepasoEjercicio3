@@ -1,3 +1,5 @@
+package baseDeDatos
+
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -15,10 +17,8 @@ class ConnectionBuilder { //Aqui se encuentra los datos de conexion de la base d
             connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword)
             connection.autoCommit=false
         } catch (e: SQLException) {
-            // TODO Auto-generated catch block
             e.printStackTrace()
         } catch (e: ClassNotFoundException) {
-            // TODO Auto-generated catch block
             e.printStackTrace()
         }
     }

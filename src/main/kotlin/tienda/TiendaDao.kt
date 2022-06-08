@@ -1,3 +1,5 @@
+package tienda
+
 import java.sql.Connection
 import java.sql.SQLException
 
@@ -12,7 +14,7 @@ class TiendaDao(private val c: Connection) {
         private const val INSERT_TIENDAS_SQL = "INSERT INTO TIENDAS" + "  (ID_TIENDA, NOMBRE_TIENDA, DIRECCION_TIENDA) VALUES " + " (?, ?, ?);"
         private const val SELECT_ALL_TIENDAS = "select * from TIENDAS"
         private const val DELETE_TIENDAS_SQL = "delete from TIENDAS where ID_TIENDA = ?;"
-        private const val UPDATE_TIENDAS_SQL = "update TIENDAS set ID_TIENDA = ?, NOMBRE_TIENDA =?, DIRECCION_TIENDA=? where ID_TIENDA = ?;"
+        private const val UPDATE_TIENDAS_SQL = "update TIENDAS set NOMBRE_TIENDA =?, DIRECCION_TIENDA=? where ID_TIENDA = ?;"
     }
     fun prepareTable():Boolean {
         var tablacreada = false
@@ -65,13 +67,13 @@ class TiendaDao(private val c: Connection) {
         }
     }
 
-    fun insertTiendas(tienda: Tienda ) {
+    fun insert(tienda: Tienda) {
         println(INSERT_TIENDAS_SQL)
         try {
             c.prepareStatement(INSERT_TIENDAS_SQL).use { st ->
-                st.setInt(1, tienda.ID_TIENDA)
-                st.setString(2, tienda.NOMBRE_TIENDA)
-                st.setString(3, tienda.DIRECCION_TIENDA)
+                st.setInt(1, tienda.id)
+                st.setString(2, tienda.nombre)
+                st.setString(3, tienda.direccion)
                 println(st)
                 st.executeUpdate()
             }
@@ -82,7 +84,7 @@ class TiendaDao(private val c: Connection) {
         }
     }
 
-    fun selectStore(): List<Tienda> {
+    fun selectAll(): List<Tienda> {
 
         val tiendas: MutableList<Tienda> = ArrayList()
         try {
@@ -103,7 +105,7 @@ class TiendaDao(private val c: Connection) {
         return tiendas
     }
 
-    fun deleteTiendaById(id: Int): Boolean {
+    fun deleteById(id: Int): Boolean {
         var rowDeleted = false
 
         try {
@@ -118,15 +120,14 @@ class TiendaDao(private val c: Connection) {
         return rowDeleted
     }
 
-    fun updateInventario(tienda: Tienda, id : Int ): Boolean {
+    fun update(tienda: Tienda): Boolean {
         var rowUpdated = false
 
         try {
             c.prepareStatement(UPDATE_TIENDAS_SQL).use { st ->
-                st.setInt(1,tienda.ID_TIENDA)
-                st.setString(2,tienda.NOMBRE_TIENDA)
-                st.setString(3,tienda.DIRECCION_TIENDA)
-                st.setInt(4,id)
+                st.setInt(3,tienda.id)
+                st.setString(1,tienda.nombre)
+                st.setString(2,tienda.direccion)
                 rowUpdated = st.executeUpdate() > 0
             }
             c.commit()

@@ -1,3 +1,5 @@
+package inventario
+
 import java.sql.Connection
 import java.sql.SQLException
 
@@ -17,7 +19,7 @@ class InventarioDao (private val c: Connection) {
         private const val UPDATE_INVENTARIOS_PRECIO_SQL =
             "update INVENTARIOS set PRECIO =  PRECIO + (PRECIO * ?) WHERE PRECIO > 2000.00;"
         private const val UPDATE_INVENTARIOS_SQL =
-            "update INVENTARIOS set ID_ARTICULO = ?, NOMBRE =?, COMENTARIO=?,PRECIO=?, ID_TIENDA=?  where ID_ARTICULO = ?;"
+            "update INVENTARIOS set NOMBRE =?, COMENTARIO=?,PRECIO=?, ID_TIENDA=?  where ID_ARTICULO = ?;"
     }
     fun prepareTable():Boolean {
         var tablacreada = false
@@ -92,15 +94,15 @@ class InventarioDao (private val c: Connection) {
         return inventarios
     }
 
-    fun insertInventario(inventario: Inventario) {
+    fun insert(inventario: Inventario) {
         println(INSERT_INVENTARIOS_SQL)
         try {
             c.prepareStatement(INSERT_INVENTARIOS_SQL).use { st ->
-                st.setInt(1, inventario.ID_ARTICULO)
-                st.setString(2, inventario.NOMBRE)
-                st.setString(3, inventario.COMENTARIO)
-                st.setDouble(4, inventario.PRECIO)
-                st.setInt(5, inventario.ID_TIENDA)
+                st.setInt(1, inventario.idArticulo)
+                st.setString(2, inventario.nombre)
+                st.setString(3, inventario.comentario)
+                st.setDouble(4, inventario.precio)
+                st.setInt(5, inventario.idTienda)
                 println(st)
                 st.executeUpdate()
             }
@@ -110,7 +112,7 @@ class InventarioDao (private val c: Connection) {
         }
     }
 
-    fun selectAllInventario(): List<Inventario> {
+    fun selectAll(): List<Inventario> {
 
         val inventarios: MutableList<Inventario> = ArrayList()
         try {
@@ -147,17 +149,16 @@ class InventarioDao (private val c: Connection) {
         return rowUpdated
     }
 
-    fun updateInventario(inventario: Inventario, id : Int ): Boolean {
+    fun update(inventario: Inventario): Boolean {
         var rowUpdated = false
 
         try {
             c.prepareStatement(UPDATE_INVENTARIOS_SQL).use { st ->
-                st.setInt(1,inventario.ID_ARTICULO)
-                st.setString(2,inventario.NOMBRE)
-                st.setString(3,inventario.COMENTARIO)
-                st.setDouble(4,inventario.PRECIO)
-                st.setInt(5,inventario.ID_TIENDA)
-                st.setInt(6,inventario.ID_ARTICULO)
+                st.setInt(5,inventario.idArticulo)
+                st.setString(1,inventario.nombre)
+                st.setString(2,inventario.comentario)
+                st.setDouble(3,inventario.precio)
+                st.setInt(4,inventario.idTienda)
                 rowUpdated = st.executeUpdate() > 0
             }
             c.commit()
