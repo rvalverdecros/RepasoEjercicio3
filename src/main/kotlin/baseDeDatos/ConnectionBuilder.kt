@@ -15,7 +15,7 @@ class ConnectionBuilder { //Aqui se encuentra los datos de conexion de la base d
     init {
         try {
             connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword)
-            connection.autoCommit=false
+            connection.autoCommit = false
         } catch (e: SQLException) {
             e.printStackTrace()
         } catch (e: ClassNotFoundException) {

@@ -1,13 +1,14 @@
 import baseDeDatos.GestorDeDatos
 import baseDeDatos.VisualizadorDeDatos
+
 fun main() {
-val gestor = GestorDeDatos()
+    val gestor = GestorDeDatos()
 //gestor.cambiarPrecioParaMayoresDe(2000,15)
 
-val visulizador = VisualizadorDeDatos()
+    val visulizador = VisualizadorDeDatos()
 
-visulizador.visTodasLasTiendas()
-visulizador.visTodosLosInvPorTiendas()
+    visulizador.visTodasLasTiendas()
+    visulizador.visTodosLosInvPorTiendas()
 
-gestor.close()
+    gestor.close()
 }

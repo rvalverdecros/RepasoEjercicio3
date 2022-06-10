@@ -3,7 +3,7 @@ package inventario
 import java.sql.Connection
 import java.sql.SQLException
 
-class InventarioDao (private val c: Connection) {
+class InventarioDao(private val c: Connection) {
     companion object {
         private const val SCHEMA = "default"
         private const val TABLE = "INVENTARIOS"
@@ -14,20 +14,22 @@ class InventarioDao (private val c: Connection) {
         private const val INSERT_INVENTARIOS_SQL =
             "INSERT INTO INVENTARIOS" + "  (ID_ARTICULO, NOMBRE, COMENTARIO,PRECIO,ID_TIENDA) VALUES " + " (?, ?, ?, ?, ?);"
         private const val SELECT_ALL_INVENTARIOS = "select * from INVENTARIOS"
-        private const val SELECT_INVENTARIOS_GROUP = "select ID_ARTICULO, NOMBRE, COMENTARIO, PRECIO, ID_TIENDA from INVENTARIOS ORDER BY ID_TIENDA"
+        private const val SELECT_INVENTARIOS_GROUP =
+            "select ID_ARTICULO, NOMBRE, COMENTARIO, PRECIO, ID_TIENDA from INVENTARIOS ORDER BY ID_TIENDA"
         private const val DELETE_INVENTARIOS_SQL = "delete from INVENTARIOS where ID_TIENDA = ?;"
         private const val UPDATE_INVENTARIOS_PRECIO_SQL =
             "update INVENTARIOS set PRECIO =  PRECIO + (PRECIO * ?) WHERE PRECIO > 2000.00;"
         private const val UPDATE_INVENTARIOS_SQL =
             "update INVENTARIOS set NOMBRE =?, COMENTARIO=?,PRECIO=?, ID_TIENDA=?  where ID_ARTICULO = ?;"
     }
-    fun prepareTable():Boolean {
+
+    fun prepareTable(): Boolean {
         var tablacreada = false
         val metaData = c.metaData
         val rs = metaData.getTables(null, SCHEMA, TABLE, null)
 
         if (!rs.next())
-            tablacreada= createTable()
+            tablacreada = createTable()
         return tablacreada
     }
 
@@ -42,7 +44,8 @@ class InventarioDao (private val c: Connection) {
             printSQLException(e)
         }
     }
-    private fun createTable():Boolean {
+
+    private fun createTable(): Boolean {
         var tablacreada = false
         println(CREATE_TABLE_INVENTARIOS_SQL)
         try {
@@ -58,7 +61,7 @@ class InventarioDao (private val c: Connection) {
         return tablacreada
     }
 
-     fun dropTable() {
+    fun dropTable() {
         println(DROP_TABLE_INVENTARIOS_SQL)
         try {
 
@@ -84,7 +87,7 @@ class InventarioDao (private val c: Connection) {
                     val comentario = rs.getString("COMENTARIO")
                     val precio = rs.getDouble("PRECIO")
                     val tiendaid = rs.getInt("ID_TIENDA")
-                    inventarios.add(Inventario(articuloid,nombre,comentario,precio,tiendaid))
+                    inventarios.add(Inventario(articuloid, nombre, comentario, precio, tiendaid))
                 }
             }
 
@@ -125,7 +128,7 @@ class InventarioDao (private val c: Connection) {
                     val comentario = rs.getString("COMENTARIO")
                     val precio = rs.getDouble("PRECIO")
                     val tiendaid = rs.getInt("ID_TIENDA")
-                    inventarios.add(Inventario(articuloid,nombre,comentario,precio,tiendaid))
+                    inventarios.add(Inventario(articuloid, nombre, comentario, precio, tiendaid))
                 }
             }
 
@@ -134,12 +137,13 @@ class InventarioDao (private val c: Connection) {
         }
         return inventarios
     }
-    fun updateInventarioPrecio(aumento:Double): Boolean {
+
+    fun updateInventarioPrecio(aumento: Double): Boolean {
         var rowUpdated = false
 
         try {
             c.prepareStatement(UPDATE_INVENTARIOS_PRECIO_SQL).use { st ->
-                st.setDouble(1,aumento)
+                st.setDouble(1, aumento)
                 rowUpdated = st.executeUpdate() > 0
             }
             c.commit()
@@ -154,11 +158,11 @@ class InventarioDao (private val c: Connection) {
 
         try {
             c.prepareStatement(UPDATE_INVENTARIOS_SQL).use { st ->
-                st.setInt(5,inventario.idArticulo)
-                st.setString(1,inventario.nombre)
-                st.setString(2,inventario.comentario)
-                st.setDouble(3,inventario.precio)
-                st.setInt(4,inventario.idTienda)
+                st.setInt(5, inventario.idArticulo)
+                st.setString(1, inventario.nombre)
+                st.setString(2, inventario.comentario)
+                st.setDouble(3, inventario.precio)
+                st.setInt(4, inventario.idTienda)
                 rowUpdated = st.executeUpdate() > 0
             }
             c.commit()

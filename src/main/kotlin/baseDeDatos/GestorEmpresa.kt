@@ -6,6 +6,7 @@ import tienda.Tienda
 import tienda.TiendaDao
 import java.util.logging.Level
 import java.util.logging.LogManager
+import kotlin.system.exitProcess
 
 internal val l = LogManager.getLogManager().getLogger("").apply { level = Level.ALL }
 
@@ -16,8 +17,8 @@ class GestorDeDatos {
      */
 
     private val c = ConnectionBuilder()
-     val conInvDAO = InventarioDao(c.connection)
-     val conTienDAO = TiendaDao(c.connection)
+    val conInvDAO = InventarioDao(c.connection)
+    val conTienDAO = TiendaDao(c.connection)
 
     /**
      * Cuando llamamos a la clase de GestorDeDatos, se incializara automaticamente la conexion como la preparacion y creacion de las tablas.
@@ -28,14 +29,16 @@ class GestorDeDatos {
     }
 
 
-     private fun connect():Boolean{
 
-     l.info("Conectando!")
+
+    private fun connect(): Boolean {
+
+        l.info("Conectando!")
         var conection = true
-     val c = ConnectionBuilder()
-     if (!c.connection.isValid(10)){
-         conection = false
-     }
+        val c = ConnectionBuilder()
+        if (!c.connection.isValid(10)) {
+            conection = false
+        }
         return conection
     }
 
@@ -49,29 +52,33 @@ class GestorDeDatos {
     }
 
     private fun creacionDeTablas() {
+        if (connect()) {
+            tablaInv(conInvDAO)
 
-        tablaInv(conInvDAO)
-
-        tablaTienda(conTienDAO)
+            tablaTienda(conTienDAO)
+        }else{
+            println("Error! No se puede conectar con la base de datos.")
+            exitProcess(-1)
+        }
     }
 
     /**
      * Esta funcion realiza el cambio que a aquellos inventarios que sean mayores al umbral que pongamos y le aumentaremos aquel porcentaje que escribamos.
      */
 
-     fun cambiarPrecioParaMayoresDe(umbral:Int, porcentaje:Int): Boolean{
-         val preciofinal = umbral.toDouble()
-         val aumento = porcentaje.toDouble()
-            val calculo = aumento / 100
-            val todoinv = conInvDAO.selectAll()
-            todoinv.forEach {
-                val precio = it.precio
-                if (precio > preciofinal) {
-                    val newprice = precio + (precio * calculo)
-                    conInvDAO.update(
-                        Inventario(it.idArticulo, it.nombre, it.comentario, newprice, it.idTienda)
-                    )
-                }
+    fun cambiarPrecioParaMayoresDe(umbral: Int, porcentaje: Int): Boolean {
+        val preciofinal = umbral.toDouble()
+        val aumento = porcentaje.toDouble()
+        val calculo = aumento / 100
+        val todoinv = conInvDAO.selectAll()
+        todoinv.forEach {
+            val precio = it.precio
+            if (precio > preciofinal) {
+                val newprice = precio + (precio * calculo)
+                conInvDAO.update(
+                    Inventario(it.idArticulo, it.nombre, it.comentario, newprice, it.idTienda)
+                )
+            }
         }
         return true
     }
@@ -113,7 +120,6 @@ class GestorDeDatos {
         return conInvDAO.selectGroup()
 
     }
-
 
 
 }
