@@ -11,27 +11,37 @@ internal val l = LogManager.getLogManager().getLogger("").apply { level = Level.
 
 class GestorDeDatos {
 
+    /**
+     * Aqui se encuentras las variables privadas que vamos a usar para llamar las consultas que queremos hacer en las bases de datos.
+     */
+
     private val c = ConnectionBuilder()
      val conInvDAO = InventarioDao(c.connection)
      val conTienDAO = TiendaDao(c.connection)
 
+    /**
+     * Cuando llamamos a la clase de GestorDeDatos, se incializara automaticamente la conexion como la preparacion y creacion de las tablas.
+     */
     init {
         connect()
         creacionDeTablas()
     }
+
 
      private fun connect():Boolean{
 
      l.info("Conectando!")
         var conection = true
      val c = ConnectionBuilder()
-     if (c.connection.isValid(10)){
-     }else{
+     if (!c.connection.isValid(10)){
          conection = false
      }
         return conection
     }
 
+    /**
+     * Sirve para cerrar la conexion a la base de datos. Tiene que ponerse siempre al final del main para que se finalice la conexion con la base de datos
+     */
     fun close() {
         l.info("Cerrando Base de Datos.....")
         val c = ConnectionBuilder()
@@ -45,14 +55,18 @@ class GestorDeDatos {
         tablaTienda(conTienDAO)
     }
 
+    /**
+     * Esta funcion realiza el cambio que a aquellos inventarios que sean mayores al umbral que pongamos y le aumentaremos aquel porcentaje que escribamos.
+     */
 
-     fun cambiarPrecioParaMayoresDe(umbral:Double, porcentaje:Double): Boolean{
-
-            val calculo = porcentaje / 100
+     fun cambiarPrecioParaMayoresDe(umbral:Int, porcentaje:Int): Boolean{
+         val preciofinal = umbral.toDouble()
+         val aumento = porcentaje.toDouble()
+            val calculo = aumento / 100
             val todoinv = conInvDAO.selectAll()
             todoinv.forEach {
                 val precio = it.precio
-                if (precio > umbral) {
+                if (precio > preciofinal) {
                     val newprice = precio + (precio * calculo)
                     conInvDAO.update(
                         Inventario(it.idArticulo, it.nombre, it.comentario, newprice, it.idTienda)
@@ -88,31 +102,18 @@ class GestorDeDatos {
         }
     }
 
-     fun visTodasLasTiendas(visTienda:List<Tienda>){
+    fun listaDeTodasLasTiendas(): List<Tienda> {
 
-        println("---------------------------------------------------------")
-        println("MOSTRAR TODAS LAS TIENDAS:")
-        visTienda.forEach {
-            println("---------------------------------------------------------")
-            println("ID de la tienda: ${it.id}")
-            println("Nombre de la tienda: ${it.nombre}")
-            println("Direccion de la tienda: ${it.direccion}")
-            println("---------------------------------------------------------")
-        }
+        return conTienDAO.selectAll()
+
     }
 
-     fun visTodosLosInvPorTiendas(visInv:List<Inventario>) {
-        println("---------------------------------------------------------")
-        println("MOSTRAR TODAS LOS INVENTARIOS ORDENADOS POR ID_TIENDA:")
-        visInv.forEach {
-            println("---------------------------------------------------------")
-            println("ID del articulo: ${it.idArticulo}")
-            println("Nombre del articulo: ${it.nombre}")
-            println("Comentario del articulo: ${it.comentario}")
-            println("Precio del articulo: ${it.precio}")
-            println("ID de la tienda que tiene el articulo: ${it.idTienda}")
-            println("---------------------------------------------------------")
-        }
+    fun listaDeTodosLosInvPorTienda(): List<Inventario> {
+
+        return conInvDAO.selectGroup()
+
     }
+
+
 
 }

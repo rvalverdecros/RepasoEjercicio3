@@ -1,12 +1,13 @@
-import baseDeDatos.ConnectionBuilder
 import baseDeDatos.GestorDeDatos
-import baseDeDatos.l
-import inventario.InventarioDao
-import tienda.TiendaDao
+import baseDeDatos.VisualizadorDeDatos
 fun main() {
 val gestor = GestorDeDatos()
-//gestor.cambiarPrecioParaMayoresDe(2000.00,15.00)
-gestor.visTodasLasTiendas(gestor.conTienDAO.selectAll())
-gestor.visTodosLosInvPorTiendas(gestor.conInvDAO.selectGroup())
+//gestor.cambiarPrecioParaMayoresDe(2000,15)
+
+val visulizador = VisualizadorDeDatos()
+
+visulizador.visTodasLasTiendas()
+visulizador.visTodosLosInvPorTiendas()
+
 gestor.close()
 }
