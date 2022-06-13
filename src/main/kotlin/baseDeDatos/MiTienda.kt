@@ -10,7 +10,7 @@ import kotlin.system.exitProcess
 
 internal val l = LogManager.getLogManager().getLogger("").apply { level = Level.ALL }
 
-class GestorDeDatos {
+class MiTienda() {
 
     /**
      * Aqui se encuentras las variables privadas que vamos a usar para llamar las consultas que queremos hacer en las bases de datos.
@@ -24,22 +24,15 @@ class GestorDeDatos {
      * Cuando llamamos a la clase de GestorDeDatos, se incializara automaticamente la conexion como la preparacion y creacion de las tablas.
      */
     init {
-        connect()
-        creacionDeTablas()
+       if (isConnect())
+            creacionDeTablas()
     }
 
 
+    private fun isConnect(): Boolean {
 
+        return (c.connection.isValid(10))
 
-    private fun connect(): Boolean {
-
-        l.info("Conectando!")
-        var conection = true
-        val c = ConnectionBuilder()
-        if (!c.connection.isValid(10)) {
-            conection = false
-        }
-        return conection
     }
 
     /**
@@ -47,16 +40,14 @@ class GestorDeDatos {
      */
     fun close() {
         l.info("Cerrando Base de Datos.....")
-        val c = ConnectionBuilder()
         c.connection.close()
     }
 
     private fun creacionDeTablas() {
-        if (connect()) {
+        if (isConnect()) {
             tablaInv(conInvDAO)
-
             tablaTienda(conTienDAO)
-        }else{
+        } else {
             println("Error! No se puede conectar con la base de datos.")
             exitProcess(-1)
         }
@@ -66,18 +57,13 @@ class GestorDeDatos {
      * Esta funcion realiza el cambio que a aquellos inventarios que sean mayores al umbral que pongamos y le aumentaremos aquel porcentaje que escribamos.
      */
 
-    fun cambiarPrecioParaMayoresDe(umbral: Int, porcentaje: Int): Boolean {
-        val preciofinal = umbral.toDouble()
-        val aumento = porcentaje.toDouble()
-        val calculo = aumento / 100
+    fun cambiarPrecioParaMayoresDe(umbral: Double, porcentaje: Double): Boolean {
+        val calculo = porcentaje / 100
         val todoinv = conInvDAO.selectAll()
-        todoinv.forEach {
-            val precio = it.precio
-            if (precio > preciofinal) {
-                val newprice = precio + (precio * calculo)
-                conInvDAO.update(
-                    Inventario(it.idArticulo, it.nombre, it.comentario, newprice, it.idTienda)
-                )
+        todoinv.forEach { producto ->
+            if (producto.precio > umbral) {
+                producto.precio = producto.precio + (producto.precio * calculo)
+                conInvDAO.update(producto)
             }
         }
         return true

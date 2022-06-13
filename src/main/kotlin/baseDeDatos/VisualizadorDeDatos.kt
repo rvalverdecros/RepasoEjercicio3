@@ -3,9 +3,8 @@ package baseDeDatos
 import inventario.Inventario
 import tienda.Tienda
 
-class VisualizadorDeDatos() {
+class VisualizadorDeDatos(private val gestor: MiTienda) {
 
-    val gestor = GestorDeDatos()
 
     /**
      * Funcion que sirve para visualizar tiendas. Recibira la lista de gestor y luego utilizara la funcion privada

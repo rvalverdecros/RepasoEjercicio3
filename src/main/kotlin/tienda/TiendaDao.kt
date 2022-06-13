@@ -19,7 +19,7 @@ class TiendaDao(private val c: Connection) {
     fun prepareTable():Boolean {
         var tablacreada = false
         val metaData = c.metaData
-        val rs = metaData.getTables(null, SCHEMA, TABLE, null)
+        val rs = metaData.getTables(null, null, TABLE, null)
 
         if (!rs.next())
             tablacreada= createTable()
