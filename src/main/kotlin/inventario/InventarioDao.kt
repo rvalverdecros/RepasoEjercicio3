@@ -2,6 +2,10 @@ package inventario
 
 import java.sql.Connection
 import java.sql.SQLException
+import java.util.logging.Level
+import java.util.logging.LogManager
+
+internal val l = LogManager.getLogManager().getLogger("").apply { level = Level.ALL }
 
 class InventarioDao(private val c: Connection) {
     companion object {
@@ -34,7 +38,7 @@ class InventarioDao(private val c: Connection) {
     }
 
     private fun truncateTable() { //Sirve para eliminar los datos de la tabla
-        println(TRUNCATE_TABLE_INVENTARIOS_SQL)
+        l.info(TRUNCATE_TABLE_INVENTARIOS_SQL)
         try {
             c.createStatement().use { st ->
                 st.execute(TRUNCATE_TABLE_INVENTARIOS_SQL)
@@ -47,7 +51,7 @@ class InventarioDao(private val c: Connection) {
 
     private fun createTable(): Boolean {
         var tablacreada = false
-        println(CREATE_TABLE_INVENTARIOS_SQL)
+        l.info(CREATE_TABLE_INVENTARIOS_SQL)
         try {
 
             c.createStatement().use { st ->
@@ -62,7 +66,7 @@ class InventarioDao(private val c: Connection) {
     }
 
     fun dropTable() {
-        println(DROP_TABLE_INVENTARIOS_SQL)
+        l.info(DROP_TABLE_INVENTARIOS_SQL)
         try {
 
             c.createStatement().use { st ->
@@ -79,7 +83,7 @@ class InventarioDao(private val c: Connection) {
         val inventarios: MutableList<Inventario> = ArrayList()
         try {
             c.prepareStatement(SELECT_INVENTARIOS_GROUP).use { st ->
-                println(st)
+                l.info(st.toString())
                 val rs = st.executeQuery()
                 while (rs.next()) {
                     val articuloid = rs.getInt("ID_ARTICULO")
@@ -98,7 +102,7 @@ class InventarioDao(private val c: Connection) {
     }
 
     fun insert(inventario: Inventario) {
-        println(INSERT_INVENTARIOS_SQL)
+        l.info(INSERT_INVENTARIOS_SQL)
         try {
             c.prepareStatement(INSERT_INVENTARIOS_SQL).use { st ->
                 st.setInt(1, inventario.idArticulo)
@@ -120,7 +124,7 @@ class InventarioDao(private val c: Connection) {
         val inventarios: MutableList<Inventario> = ArrayList()
         try {
             c.prepareStatement(SELECT_ALL_INVENTARIOS).use { st ->
-                println(st)
+                l.info(st.toString())
                 val rs = st.executeQuery()
                 while (rs.next()) {
                     val articuloid = rs.getInt("ID_ARTICULO")

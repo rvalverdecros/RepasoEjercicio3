@@ -2,6 +2,10 @@ package tienda
 
 import java.sql.Connection
 import java.sql.SQLException
+import java.util.logging.Level
+import java.util.logging.LogManager
+
+internal val l = LogManager.getLogManager().getLogger("").apply { level = Level.ALL }
 
 class TiendaDao(private val c: Connection) {
     companion object {
@@ -27,7 +31,7 @@ class TiendaDao(private val c: Connection) {
     }
 
     private fun truncateTable() {
-        println(TRUNCATE_TABLE_TIENDAS_SQL)
+        l.info(TRUNCATE_TABLE_TIENDAS_SQL)
         try {
             c.createStatement().use { st ->
                 st.execute(TRUNCATE_TABLE_TIENDAS_SQL)
@@ -40,7 +44,7 @@ class TiendaDao(private val c: Connection) {
 
     private fun createTable():Boolean {
         var tablacreada = false
-        println(CREATE_TABLE_TIENDAS_SQL)
+        l.info(CREATE_TABLE_TIENDAS_SQL)
         try {
 
             c.createStatement().use { st ->
@@ -55,7 +59,7 @@ class TiendaDao(private val c: Connection) {
     }
 
      fun dropTable() {
-        println(DROP_TABLE_TIENDAS_SQL)
+         l.info(DROP_TABLE_TIENDAS_SQL)
         try {
 
             c.createStatement().use { st ->
@@ -68,7 +72,7 @@ class TiendaDao(private val c: Connection) {
     }
 
     fun insert(tienda: Tienda) {
-        println(INSERT_TIENDAS_SQL)
+        l.info(INSERT_TIENDAS_SQL)
         try {
             c.prepareStatement(INSERT_TIENDAS_SQL).use { st ->
                 st.setInt(1, tienda.id)
@@ -89,7 +93,7 @@ class TiendaDao(private val c: Connection) {
         val tiendas: MutableList<Tienda> = ArrayList()
         try {
             c.prepareStatement(SELECT_ALL_TIENDAS).use { st ->
-                println(st)
+                l.info(st.toString())
                 val rs = st.executeQuery()
                 while (rs.next()) {
                     val tiendaid = rs.getInt("ID_TIENDA")
