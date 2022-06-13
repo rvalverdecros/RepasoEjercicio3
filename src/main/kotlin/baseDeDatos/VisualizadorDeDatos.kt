@@ -1,8 +1,5 @@
 package baseDeDatos
 
-import inventario.InventarioDao
-import tienda.TiendaDao
-import baseDeDatos.GestorDeDatos
 import inventario.Inventario
 import tienda.Tienda
 
@@ -11,15 +8,16 @@ class VisualizadorDeDatos() {
     val gestor = GestorDeDatos()
 
     /**
-     * Funcion que sirve para visualizar tiendas. Tiene que recibir una lista para que pueda visualizarla correctamente.
+     * Funcion que sirve para visualizar tiendas. Recibira la lista de gestor y luego utilizara la funcion privada
+     *  para mostrarlo en pantalla.
      */
 
     fun visTodasLasTiendas() {
         val visTienda = gestor.listaDeTodasLasTiendas()
-        visualizacionAllStore(visTienda)
+        mostrarPorPantallaTodasLasTiendas(visTienda)
     }
 
-    private fun visualizacionAllStore(lista: List<Tienda>) {
+    private fun mostrarPorPantallaTodasLasTiendas(lista: List<Tienda>) {
         println("---------------------------------------------------------")
         println("MOSTRAR TODAS LAS TIENDAS:")
         lista.forEach {
@@ -32,15 +30,16 @@ class VisualizadorDeDatos() {
     }
 
     /**
-     * Funcion que sirve para visualizar inventarios. Tiene que recibir una lista para que pueda visualizarla correctamente.
+     * Funcion que sirve para visualizar inventarios. Recibira la lista de gestor y luego utilizara la funcion privada
+     *  para mostrarlo en pantalla.
      */
     fun visTodosLosInvPorTiendas() {
         val visInv = gestor.listaDeTodosLosInvPorTienda()
-        visualizacionAllInvForStore(visInv)
+        mostrarPorPantallaLosInventariosPorTienda(visInv)
 
     }
 
-    private fun visualizacionAllInvForStore(lista: List<Inventario>) {
+    private fun mostrarPorPantallaLosInventariosPorTienda(lista: List<Inventario>) {
         println("---------------------------------------------------------")
         println("MOSTRAR TODOS LOS INVENTARIOS ORDENADOS POR ID_TIENDA:")
         lista.forEach {
